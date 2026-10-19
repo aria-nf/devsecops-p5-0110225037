@@ -11,9 +11,10 @@ from .auth import login_required
 from .db import get_db
 
 bp = Blueprint("blog", __name__)
+ENDPOINT_BLOG_INDEX = "blog.index"
 
 
-@bp.route("/")
+@bp.route("/", methods=("GET",))
 def index():
     """Show all the posts, most recent first."""
     db = get_db()
@@ -40,17 +41,18 @@ def get_post(id, check_author=True):
     post = (
         get_db()
         .execute(
-            f"SELECT p.id, title, body, created, author_id, username"
-            f" FROM post p JOIN user u ON p.author_id = u.id"
-            f" WHERE p.id = {id}"
+            "SELECT p.id, title, body, created, author_id, username"
+            " FROM post p JOIN user u ON p.author_id = u.id"
+            " WHERE p.id = ?",
+            (id,),
         )
         .fetchone()
     )
 
     if post is None:
-        abort(404, f"Post id {id} doesn't exist.")
+        return abort(404, f"Post id {id} doesn't exist.")
 
-    if check_author and post["author_id"] != g.user["id"]:
+    if check_author and (g.user is None or post["author_id"] != g.user["id"]):
         abort(403)
 
     return post
@@ -77,7 +79,7 @@ def create():
                 (title, body, g.user["id"]),
             )
             db.commit()
-            return redirect(url_for("blog.index"))
+            return redirect(url_for(ENDPOINT_BLOG_INDEX))
 
     return render_template("blog/create.html")
 
@@ -104,7 +106,7 @@ def update(id):
                 "UPDATE post SET title = ?, body = ? WHERE id = ?", (title, body, id)
             )
             db.commit()
-            return redirect(url_for("blog.index"))
+            return redirect(url_for(ENDPOINT_BLOG_INDEX))
 
     return render_template("blog/update.html", post=post)
 
@@ -121,4 +123,4 @@ def delete(id):
     db = get_db()
     db.execute("DELETE FROM post WHERE id = ?", (id,))
     db.commit()
-    return redirect(url_for("blog.index"))
+    return redirect(url_for(ENDPOINT_BLOG_INDEX))
