@@ -5,10 +5,10 @@ from flask import Flask
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
-    app = Flask(__name__, instance_relative_config=True)  # NOSONAR
+    app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        # a default secret that should be overridden by environment variable
-        SECRET_KEY=os.environ.get("SECRET_KEY", "dev"),
+        # use environment secret key when available, otherwise generate one
+        SECRET_KEY=os.environ.get("SECRET_KEY") or os.urandom(32).hex(),
         # store the database in the instance folder
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
