@@ -274,3 +274,9 @@ semgrep scan --config auto flaskr/
 
 ### Lampiran
 ![alt text](images/README/image.png)
+![alt text](images/README/image-1.png)
+![alt text](images/README/image-2.png)
+![alt text](images/README/image-3.png)
+
+![alt text](images/README/image-4.png)
+![alt text](images/README/image-5.png)
