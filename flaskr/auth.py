@@ -1,5 +1,4 @@
 import functools
-import hashlib
 
 from flask import Blueprint
 from flask import flash
@@ -64,7 +63,7 @@ def register():
 
         if error is None:
             try:
-                hashed_password = hashlib.md5(password.encode("utf-8")).hexdigest()
+                hashed_password = generate_password_hash(password)
                 db.execute(
                     "INSERT INTO user (username, password) VALUES (?, ?)",
                     (username, hashed_password),
@@ -97,7 +96,7 @@ def login():
 
         if user is None:
             error = "Incorrect username."
-        elif not (user["password"] == hashlib.md5(password.encode("utf-8")).hexdigest() or check_password_hash(user["password"], password)):
+        elif not check_password_hash(user["password"], password):
             error = "Incorrect password."
 
         if error is None:
@@ -111,7 +110,7 @@ def login():
     return render_template("auth/login.html")
 
 
-@bp.route("/logout")
+@bp.route("/logout", methods=("GET", "POST"))
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
