@@ -2,9 +2,9 @@ name: DevSecOps Pipeline
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
-    branches: [main, dev]
+    branches: [main]
 
 jobs:
   # Job 1: Build, Dependency Install, & Unit Testing + Coverage Gate
@@ -74,11 +74,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # Job 3: SAST Scan Bandit (Mendeteksi celah spesifik Python seperti MD5, SQLi, Debug True)
-  sast-bandit:
+  sast-scan:
     name: SAST Scan (Bandit)
     runs-on: ubuntu-latest
-    needs: [build, sonarcloud]
-    if: always()
+    needs: build
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -108,8 +107,7 @@ jobs:
   sast-semgrep:
     name: SAST Scan (Semgrep)
     runs-on: ubuntu-latest
-    needs: [build, sast-bandit]
-    if: always()
+    needs: [build, sast-scan]
     container:
       image: semgrep/semgrep
     permissions:
