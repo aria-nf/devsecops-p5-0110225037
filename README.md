@@ -106,7 +106,7 @@ graph LR
 Repositori memiliki 2 branch untuk demonstrasi:
 
 - **`main`** — Kode yang sudah diremediasi. Seluruh job pipeline **PASSED ✅**.
-- **`before`** — Kode dengan 4 celah keamanan yang disuntikkan (SQL Injection, MD5 Hashing, Hardcoded Secret, Debug Mode). Pipeline **FAILED ❌** pada job SAST.
+- **`before`** — Kode baseline dengan kerentanan keamanan dan issues yang terdeteksi scanner (SQL Injection, Risky MD5 Hashing, Hardcoded Secret, Production Debug Mode, serta bug & code smells SonarCloud). Pipeline **FAILED ❌** pada job SAST & Quality Gate.
 
 | Gate | Branch `before` | Branch `main` |
 | :--- | :---: | :---: |

@@ -9,3 +9,4 @@ semgrep-results.sarif
 *.sqlite
 instance/
 FINDINGS_PRIVATE.md
+_tmp/
